@@ -1,5 +1,5 @@
-DROP KEYSPACE IF EXISTS Dish_keyspace;
-DROP TABLE IF EXISTS Dish_keyspace."Dish_table";
-DROP TABLE IF EXISTS Dish_keyspace."Receipts";
-DROP TABLE IF EXISTS Dish_keyspace."Ingridients";
-DROP TABLE IF EXISTS Dish_keyspace."Features";
+DROP KEYSPACE IF EXISTS dish_keyspace;
+DROP TABLE IF EXISTS dish_keyspace."dish";
+DROP TABLE IF EXISTS dish_keyspace."receipts";
+DROP TABLE IF EXISTS dish_keyspace."ingridients";
+DROP TABLE IF EXISTS dish_keyspace."features";
