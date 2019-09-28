@@ -1,39 +1,35 @@
-CREATE KEYSPACE IF NOT EXISTS Dish_keyspace
+CREATE KEYSPACE IF NOT EXISTS dish_keyspace
 WITH replication = {
 	'class' : 'SimpleStrategy',
 	'replication_factor' : 2
 };
-USE Dish_keyspace;
+USE dish_keyspace;
 
-
-CREATE TYPE receipt_type (
-	receipt_name text,
-	receipt_content text,
-	receipt_ingridients text
+CREATE TABLE IF NOT EXISTS dish_keyspace.dish (
+	dish_name TEXT,
+	dish_id INT,
+	dish_feauture_id INT,
+	dish_receipt_id INT,
+	PRIMARY KEY(dish_id)	
 );
 
-CREATE TABLE IF NOT EXISTS "Dish_table" (
-	dish_name text,
-	dish_receipt FROZEN<receipt_type>,
-	dish_id int,
-	dish_feature set<text>,
-	PRIMARY KEY ((dish_id))	
+CREATE TABLE IF NOT EXISTS dish_keyspace.ingridients (
+	ingridient_id INT,
+	ingridient_list list<text>,
+	PRIMARY KEY(ingridient_id)
 );
-
-CREATE TABLE IF NOT EXISTS "Receipts" (
-	receipt_id int,
-	receipt_ingridients list<text>,
-	PRIMARY KEY (receipt_id)
+CREATE TYPE IF NOT EXISTS receipt_content (
+	id INT,
+	receipt_content TEXT
 );
-
-CREATE TABLE IF NOT EXISTS "Ingridients" (
-	ingridients_id int,
-	ingridients_list list<text>,
-	PRIMARY KEY (ingridients_id) 
+CREATE TABLE IF NOT EXISTS dish_keyspace.receipts (
+		receipt FROZEN<receipt_content>,
+		receipt_id INT,
+		receipt_ingridient_id INT,
+		PRIMARY KEY(receipt_id)
 );
-
-CREATE TABLE IF NOT EXISTS "Features" (
-	feature_id int,
-	feature_name set<text>,
-	PRIMARY KEY (feature_id) 
+CREATE TABLE IF NOT EXISTS dish_keyspace.features (
+	feature_name TEXT,
+	feature_id INT,
+	PRIMARY KEY(feature_id)
 );
