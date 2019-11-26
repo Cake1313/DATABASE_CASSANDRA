@@ -66,7 +66,7 @@ def edit_restaurant():
 
         restaurant_obj = db.sqlalchemy_session.query(Restaurant).filter(Restaurant.name == restaurantname).one()
 
-        form.name.data = restaurant_obj.name,
+        form.name.data = restaurant_obj.name
         form.dishname_fk.data = restaurant_obj.dishname_fk
         form.star.data = restaurant_obj.star
         form.country.data = restaurant_obj.country
@@ -76,16 +76,19 @@ def edit_restaurant():
 
         form.old_name.data = restaurant_obj.name
 
-        return render_template('restaurant_form.html', form=form, form_name="Edit restaurant", action="edit_restaurant")
+        return render_template('edit_form.html', form=form, form_name="Edit restaurant", action="edit_restaurant")
 
     else:
         if not form.validate():
-            return render_template('restaurant_form.html', form=form, form_name="Edit restaurant",
+            return render_template('edit_form.html', form=form, form_name="Edit restaurant",
                                    action="edit_restaurant")
         else:
             restaurant_obj = db.sqlalchemy_session.query(Restaurant).filter(Restaurant.name == form.old_name.data).one()
 
-
+            restaurant_obj.name = form.name.data
+            restaurant_obj.dishname_fk = form.dishname_fk.data
+            restaurant_obj.country= form.country.data
+            restaurant_obj.address= form.address.data
             restaurant_obj.city = form.city.data
             restaurant_obj.star = form.star.data
             db.sqlalchemy_session.commit()
@@ -119,19 +122,19 @@ def index_type():
 @app.route('/new_type', methods=['GET', 'POST'])
 def new_type():
     form = TypeForm()
-
+    print('it;s type new')
     if request.method == 'POST':
         if not form.validate():
+            print('it s not form validate')
             return render_template('type_form.html', form=form, form_name="New type", action="new_type")
         else:
-            q = db.sqlalchemy_session.query(func.max(Type.id)).one()
-            list_of_max = list(q)
-            new_index = list_of_max[0] + 1
+            print('else')
+
             type_obj = Type(
-                id=new_index,
                 typename=form.typename.data,
                 dishname_fk=form.dishname_fk.data
             )
+            print(type_obj)
             a = db.sqlalchemy_session.query(Dish).filter(Dish.dishname == form.dishname_fk.data).all()
             if not a:
                 return render_template('type_form.html', form=form, form_name="New type",
@@ -153,31 +156,32 @@ def edit_type():
         typeid = request.args.get('name')
         db = PostgresDb()
 
-        typeobj = db.sqlalchemy_session.query(Type).filter(Type.id == typeid).one()
+        typeobj = db.sqlalchemy_session.query(Type).filter(Type.id == typeid ).one()
 
         form.typename.data = typeobj.typename
         form.dishname_fk.data = typeobj.dishname_fk
-        form.old_id.data = typeobj.id
+
         form.old_name.data = typeobj.dishname_fk
-        print('type', typeobj.id)
-        print('form', form.old_id.data)
-        return render_template('type_form.html', form=form, form_name="Edit type", action="edit_type")
+        form.old_type.data = typeobj.typename
+        return render_template('type_form.html', form=form, typeid=typeid,  form_name="Edit type", action="edit_type")
 
     else:
         if not form.validate():
             return render_template('type_form.html', form=form, form_name="Edit type",
                                    action="edit_type")
         else:
-            typeid = request.args.get('name')
-            db = PostgresDb()
 
-            typeobj = db.sqlalchemy_session.query(Type).filter(Type.id == form.old_id.data).one()
+
+            allobjects = db.sqlalchemy_session.query(Type).all()
+            for el in allobjects:
+                if (el.typename == form.old_type.data and el.dishname_fk == form.old_name.data):
+                    typeobj = el
 
             typeobj.typename = form.typename.data
 
             db.sqlalchemy_session.commit()
 
-            return redirect(url_for('index_type'))
+    return redirect(url_for('index_type'))
 
 
 @app.route('/delete_type')
@@ -241,7 +245,7 @@ def edit_dish():
             return render_template('dish_form.html', form=form, form_name="Edit dish",
                                    action="edit_dish")
         else:
-            dish = db.sqlalchemy_session.query(Dish).filter(Dish.dishname == form.old_name.data,).one()
+            dish = db.sqlalchemy_session.query(Dish).filter(Dish.dishname == form.old_name.data).one()
             dish.dishname = form.dishname.data
             dish.calories_amount = form.calories_amount.data
             db.sqlalchemy_session.commit()
@@ -447,6 +451,5 @@ def dashboard():
 #             return redirect(url_for('index_ingridient'))
 #
 #     return render_template('ingridients_form.html', form=form, form_name="New ingridient", action="new_ingridient")
-#
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run()
