@@ -325,74 +325,74 @@ def dashboard():
     data = [bar, scatter]
     graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
 
-    #bar_data = [bar]
-    #graphJSON1 = json.dumps(bar_data, cls=plotly.utils.PlotlyJSONEncoder)
+    bar_data = [bar]
+    graphJSON1 = json.dumps(bar_data, cls=plotly.utils.PlotlyJSONEncoder)
 
 
-    # names = set()
-    # for type_e in db.sqlalchemy_session.query(Type).distinct():
-    #     names.add(type_e.typename)
-    #     print("type names", type_e.typename)
-    # values = []
-    #
-    # for i in names:
-    #     q = db.sqlalchemy_session.query(func.count(Type.typename)).filter(Type.typename == i).one()
-    #     list_of_max = list(q)
-    #     new_index = list_of_max[0]
-    #     print("new index", new_index)
-    # names_converted = tuple(names)
-    # pie = go.Pie(labels=names_converted, values=values)
-    # pie_data = [pie]
-    #
-    # graphJSON2 = json.dumps(pie_data, cls=plotly.utils.PlotlyJSONEncoder)
+    names = set()
+    for type_e in db.sqlalchemy_session.query(Type).distinct():
+        names.add(type_e.typename)
+        print("type names", type_e.typename)
+    values = []
+    
+    for i in names:
+        q = db.sqlalchemy_session.query(func.count(Type.typename)).filter(Type.typename == i).one()
+        list_of_max = list(q)
+        new_index = list_of_max[0]
+        print("new index", new_index)
+    names_converted = tuple(names)
+    pie = go.Pie(labels=names_converted, values=values)
+    pie_data = [pie]
+    
+    graphJSON2 = json.dumps(pie_data, cls=plotly.utils.PlotlyJSONEncoder)
     return render_template('dashboard.html', graphJSON=graphJSON, ids=ids)
    # return render_template('dashboard.html', graphJSON1=graphJSON1, graphJSON2=graphJSON2, ids=ids)
 
-# @app.route('/edit_receipt', methods=['GET', 'POST'])
-# def edit_receipt():
-#     form = ReceiptForm()
-#     dish = request.args.get('name')
-#
-#     if request.method == 'GET':
-#         print(dish)
-#     else:
-#         print(dish)
-#     #     #
-#     #     dish = db.session.query(Receipt).filter(
-#     #         Receipt.dish == dish).one()
-#     #     print(dish)
-#     #     a = db.session.query(Receipt).filter(Receipt.dish == Receipt.dish).all()
-#     #     if not a:
-#     #         return render_template('receipt_form.html', form=form, form_name="Edit receipt",
-#     #                                action="edit_receipt")
-#     #     form.receipt.data = dish.receipt
-#     #     form.dish.data = dish.dish
-#     #     form.old_name.data = dish.dish
-#     #     return render_template('receipt_form.html', form=form, form_name="Edit receipt", action="edit_receipt")
-#     #
-#     # else:
-#     #     if not form.validate():
-#     #         return render_template('receipt_form.html', form=form, form_name="Edit receipt",
-#     #                                action="edit_receipt")
-#     #     else:
-#     #         dish = db.session.query(Receipt).filter(Receipt.dish == form.old_name.data,).one()
-#     #         dish.dish = form.dish.data
-#     #         dish.receipt = form.receipt.data
-#     #         db.session.commit()
-#         return redirect(url_for('index_receipt'))
-#
-# @app.route('/delete_receipt')
-# def delete_receipt():
-#
-#     dishreceipt = request.args.get('name')
-#     dish = db.sqlalchemy_session.query(Receipt).filter(Receipt.dish == dishreceipt).first()
-#     # result = db.query(Receipt).filter(
-#     #     Receipt.dish == dishreceipt).one()
-#
-#     db.sqlalchemy_session.delete(dish)
-#     db.sqlalchemy_session.commit()
-#     #
-#     return redirect(url_for('index_receipt'))
+@app.route('/edit_receipt', methods=['GET', 'POST'])
+def edit_receipt():
+    form = ReceiptForm()
+    dish = request.args.get('name')
+
+    if request.method == 'GET':
+        print(dish)
+    else:
+        print(dish)
+    #     #
+        dish = db.session.query(Receipt).filter(
+            Receipt.dish == dish).one()
+        print(dish)
+        a = db.session.query(Receipt).filter(Receipt.dish == Receipt.dish).all()
+        if not a:
+            return render_template('receipt_form.html', form=form, form_name="Edit receipt",
+                                   action="edit_receipt")
+        form.receipt.data = dish.receipt
+        form.dish.data = dish.dish
+        form.old_name.data = dish.dish
+        return render_template('receipt_form.html', form=form, form_name="Edit receipt", action="edit_receipt")
+    
+    else:
+        if not form.validate():
+            return render_template('receipt_form.html', form=form, form_name="Edit receipt",
+                                   action="edit_receipt")
+        else:
+            dish = db.session.query(Receipt).filter(Receipt.dish == form.old_name.data,).one()
+            dish.dish = form.dish.data
+            dish.receipt = form.receipt.data
+            db.session.commit()
+        return redirect(url_for('index_receipt'))
+
+@app.route('/delete_receipt')
+def delete_receipt():
+
+    dishreceipt = request.args.get('name')
+    dish = db.sqlalchemy_session.query(Receipt).filter(Receipt.dish == dishreceipt).first()
+    # result = db.query(Receipt).filter(
+    #     Receipt.dish == dishreceipt).one()
+
+    db.sqlalchemy_session.delete(dish)
+    db.sqlalchemy_session.commit()
+    #
+    return redirect(url_for('index_receipt'))
 #
 # @app.route('/ingridients')
 # def index_ingridient():
